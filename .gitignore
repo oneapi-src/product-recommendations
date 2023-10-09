@@ -1,0 +1,8 @@
+# models
+saved_models/
+
+# data
+data/
+
+# jupyter notebook cache
+.ipynb_checkpoints/

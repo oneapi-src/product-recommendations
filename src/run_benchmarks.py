@@ -2,7 +2,7 @@
    This code base is adopted from the below notebook
    https://www.kaggle.com/shawamar/product-recommendation-system-for-e-commerce
 '''
-# Copyright (C) 2022 Intel Corporation
+# Copyright (C) 2023 Intel Corporation
 # SPDX-License-Identifier: BSD-3-Clause
 
 # pylint: disable=W0311,E0401,W0622,W0612,W0105
@@ -13,6 +13,7 @@ import time
 import sys
 import warnings
 import logging
+import os
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
@@ -23,8 +24,6 @@ from joblib import dump, load
 import pandas as pd
 warnings.filterwarnings("ignore")
 
-DATASET_FILE ="./data/flipkart_com-ecommerce_sample.csv"
-TRUE_K =12
 def run_hyperparametertuning(X1):
     """run_hyperparametertuning"""
     best_score = 0.001  # Setting the initial Silhoutte Score
@@ -51,7 +50,7 @@ def run_hyperparametertuning(X1):
             if score > best_score:
                 best_score=score  # Set the best score to the new score calculated
                 print("Saving model!!! Best score is --->",best_score)
-                dump(model,"./saved_models/prod_rec.joblib")  #Save the model
+                dump(model, OUTPUT_DIR + "/saved_models/prod_rec.joblib")  #Save the model
                 best_params = (i,j)
     logger.info('Total fit and predict time taken during Hyperparameter Tuning in sec: %s', sum(sum_time))  # Calculation on time taken for Hyperparamater tuning
     return best_params
@@ -94,7 +93,20 @@ def show_recommendations(product,model):
         
 if __name__ == "__main__":
     
-    #Arguements
+    # Check DATASET_FILE and OUTPUT_DIR variables
+    global DATASET_FILE
+    global OUTPUT_DIR
+    global TRUE_K
+
+    try:
+        OUTPUT_DIR = os.environ["OUTPUT_DIR"]
+    except:
+        sys.exit("OUTPUT_DIR not defined")
+
+    TRUE_K = 12
+    DATASET_FILE = OUTPUT_DIR + "/flipkart-products-ecommerce/flipkart_com-ecommerce_sample.csv"
+
+    #Arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-d',
                         '--datasetsize',
@@ -104,30 +116,25 @@ if __name__ == "__main__":
                         help="Size of the dataset"
                         )
 
-    parser.add_argument('-i',
-                        '--intel',
-                        default=False,
-                        help="use intel accelerated technologies")
-
     parser.add_argument('-l',
                         '--logfile',
                         type=str,
                         default="",
-                        help="log file to output benchmarking results to")
+                        help="Log file to output benchmarking results to")
 
     parser.add_argument('-t',
                         '--tuning',
                         required=False,
                         type=str,
                         default=0,
-                        help='hyper parameter tuning (0/1)')
+                        help='Hyper parameter tuning (0/1)')
                         
     parser.add_argument('-mp',
                         '--modelpath',
                         required=False,
                         type=str,
                         default=None,
-                        help='model path')
+                        help='Model path for inference')
 
     FLAGS = parser.parse_args()
     datasize = FLAGS.datasetsize
@@ -136,14 +143,11 @@ if __name__ == "__main__":
     else:
         logging.basicConfig(filename=FLAGS.logfile, level=logging.DEBUG)
     logger = logging.getLogger()
-   
-    if FLAGS.intel:
-        "import the intel sklearnex"
-        logging.debug("Loading intel libraries..")
-        from sklearnex import patch_sklearn
-        patch_sklearn()
-    else:
-        logging.debug("Loading stock libraries..")
+
+    print("import the intel sklearnex")
+    logging.debug("Loading intel libraries..")
+    from sklearnex import patch_sklearn
+    patch_sklearn()
     start_time_data_prep = time.time()  # Start of data prep  
     try:
         train_original = pd.read_csv(DATASET_FILE)  #Read data from csv file
@@ -199,19 +203,19 @@ if __name__ == "__main__":
         print("Top terms per cluster:")
         original_space_centroids = svd.inverse_transform(model.cluster_centers_)
         order_centroids = original_space_centroids.argsort()[:, ::-1]
-        terms = vectorizer.get_feature_names()
+        terms = vectorizer.get_feature_names_out()
         for i in range(TRUE_K):
-          print_cluster(i)
+            print_cluster(i)
         logger.info('Kmeans_training_time_without_Hyperparametertunning:%s', train_time)  # Calculate and print the time taken for hp tuning
         print("Saving model..........")
-        dump(model,"./saved_models/prod_rec.joblib")  #Save the model
+        dump(model, OUTPUT_DIR + "/saved_models/prod_rec.joblib")  #Save the model
 
     # Inferencing
     if FLAGS.modelpath is not None:
         model = load(FLAGS.modelpath)
         original_space_centroids = svd.inverse_transform(model.cluster_centers_)
         order_centroids = original_space_centroids.argsort()[:, ::-1]
-        terms = vectorizer.get_feature_names()
+        terms = vectorizer.get_feature_names_out()
         #Calculate batch inference timings
         batch_inference(model)
         # Calculating realtime inference time.
@@ -223,4 +227,3 @@ if __name__ == "__main__":
             Avg.append(time_inference_real)
             show_recommendations(i,model) 
         logger.info('Average Time of Real time recomendation:%s', sum(Avg)/len(Avg))  # Calculate average time for real time inference
-       
