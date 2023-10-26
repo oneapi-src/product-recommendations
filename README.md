@@ -1,4 +1,4 @@
-# Product Recommendation System
+# Product Recommendation
 
 ## Introduction
 
