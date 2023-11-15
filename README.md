@@ -107,7 +107,7 @@ mkdir -p $WORKSPACE && cd $WORKSPACE
 ```
 
 ```bash
-git clone https://github.com/intel-innersource/frameworks.ai.platform.sample-apps.product-recommendations.git $WORKSPACE
+git clone https://github.com/oneapi-src/product-recommendations.git $WORKSPACE
 ```
 
 ### Set Up Conda
