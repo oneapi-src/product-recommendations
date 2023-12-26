@@ -96,6 +96,7 @@ if __name__ == "__main__":
     # Check DATASET_FILE and OUTPUT_DIR variables
     global DATASET_FILE
     global OUTPUT_DIR
+    global DATA_DIR
     global TRUE_K
 
     try:
@@ -103,8 +104,13 @@ if __name__ == "__main__":
     except:
         sys.exit("OUTPUT_DIR not defined")
 
+    try:
+        DATA_DIR = os.environ["DATA_DIR"]
+    except:
+        sys.exit("DATA_DIR not defined")
+
     TRUE_K = 12
-    DATASET_FILE = OUTPUT_DIR + "/flipkart-products-ecommerce/flipkart_com-ecommerce_sample.csv"
+    DATASET_FILE = DATA_DIR + "/flipkart-products-ecommerce/flipkart_com-ecommerce_sample.csv"
 
     #Arguments
     parser = argparse.ArgumentParser()
