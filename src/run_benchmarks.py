@@ -2,7 +2,7 @@
    This code base is adopted from the below notebook
    https://www.kaggle.com/shawamar/product-recommendation-system-for-e-commerce
 '''
-# Copyright (C) 2023 Intel Corporation
+# Copyright (C) 2024 Intel Corporation
 # SPDX-License-Identifier: BSD-3-Clause
 
 # pylint: disable=W0311,E0401,W0622,W0612,W0105
