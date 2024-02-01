@@ -93,6 +93,14 @@ The following variables could be adapted by the user and will be used during the
 
 ```bash
 export WORKSPACE=$PWD/product-recommendations
+```
+
+Define `DATA_DIR` and `OUTPUT_DIR` as follows:
+
+[//]: # (capture: baremetal)
+
+```bash
+export DATA_DIR=$WORKSPACE/data
 export OUTPUT_DIR=$WORKSPACE/output
 ```
 
@@ -150,7 +158,7 @@ During this setup, `product_recommendation_intel` conda environment will be crea
 
 **YAML file**                                 | **Environment Name** |  **Configuration** |
 | :---: | :---: | :---: |
-`env/intel_env.yml`             | `product_recommendation_intel` | Python=3.9.x with Intel® Extension for Scikit-learn*  |
+`env/intel_env.yml`             | `product_recommendation_intel` | Python=3.10.x with Intel® Extension for Scikit-learn*  |
 
 ### Download the Datasets
 
@@ -170,11 +178,9 @@ To setup the data for benchmarking under these requirements, run the following s
 
 > Please see this data set's applicable license for terms and conditions. Intel Corporation does not own the rights to this data set and does not confer any rights to it.
 
-[//]: # (capture: baremetal)
-
 ```bash
-mkdir -p $OUTPUT_DIR
-cd $OUTPUT_DIR
+mkdir -p $DATA_DIR
+cd $DATA_DIR
 kaggle datasets download -d PromptCloudHQ/flipkart-products
 unzip flipkart-products.zip -d flipkart-products-ecommerce
 ```
@@ -261,7 +267,7 @@ Saving model..........
 ```
 
 Running Cluster Analysis/Predictions:
-To run the batch and real time inference  run the following command:
+To run the batch and real time inference run the following command:
 
 [//]: # (capture: baremetal)
 
@@ -315,20 +321,13 @@ We are training with 1k data size here. Similarly, one can try with 5k, 10k, 15k
 
 Follow these steps to restore your $WORKSPACE directory to an initial step. Please note that all downloaded dataset files, conda environment, and logs created by workflow will be deleted. Before executing next steps back up your important files.
 
-[//]: # (capture: baremetal)
-
 ```bash
 rm -rf $OUTPUT_DIR
-```
-
-```bash
 conda deactivate
 conda remove --name product_recommendation_intel --all -y
 ```
 
 If you want to remove all the repository, execute the following command:
-
-[//]: # (capture: baremetal)
 
 ```bash
 rm -rf $WORKSPACE

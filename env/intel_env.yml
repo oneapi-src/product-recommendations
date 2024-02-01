@@ -3,12 +3,9 @@ channels:
   - intel
   - conda-forge
 dependencies:
-  - intelpython3_core=2023.2.0=py39_0
-  - scikit-learn-intelex==2023.2.1
-  - daal4py==2023.2.1
-  - numpy==1.24.3
-  - pip==23.1.2
-  - python=3.9
-  - ipython==8.15.0
-  - pandas==1.5.3
+  - python=3.10
+  - ipython==8.18.1
+  - intelpython3_core==2024.0.0
+  - scikit-learn-intelex==2024.0.1
+  - pandas==1.5.2
   - kaggle==1.5.16

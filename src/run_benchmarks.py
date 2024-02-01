@@ -2,7 +2,7 @@
    This code base is adopted from the below notebook
    https://www.kaggle.com/shawamar/product-recommendation-system-for-e-commerce
 '''
-# Copyright (C) 2023 Intel Corporation
+# Copyright (C) 2024 Intel Corporation
 # SPDX-License-Identifier: BSD-3-Clause
 
 # pylint: disable=W0311,E0401,W0622,W0612,W0105
@@ -96,6 +96,7 @@ if __name__ == "__main__":
     # Check DATASET_FILE and OUTPUT_DIR variables
     global DATASET_FILE
     global OUTPUT_DIR
+    global DATA_DIR
     global TRUE_K
 
     try:
@@ -103,8 +104,13 @@ if __name__ == "__main__":
     except:
         sys.exit("OUTPUT_DIR not defined")
 
+    try:
+        DATA_DIR = os.environ["DATA_DIR"]
+    except:
+        sys.exit("DATA_DIR not defined")
+
     TRUE_K = 12
-    DATASET_FILE = OUTPUT_DIR + "/flipkart-products-ecommerce/flipkart_com-ecommerce_sample.csv"
+    DATASET_FILE = DATA_DIR + "/flipkart-products-ecommerce/flipkart_com-ecommerce_sample.csv"
 
     #Arguments
     parser = argparse.ArgumentParser()
